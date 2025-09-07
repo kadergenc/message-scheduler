@@ -1,34 +1,15 @@
 basePath: /
 definitions:
-  api.GetSentMessagesResponse:
+  response.GetSentMessagesResponse:
     properties:
       messages:
         items:
-          $ref: '#/definitions/api.SentMessageResponse'
+          $ref: '#/definitions/response.SentMessageResponse'
         type: array
       total:
         type: integer
     type: object
-  api.MessageRequest:
-    properties:
-      content:
-        type: string
-      to:
-        type: string
-    required:
-    - content
-    - to
-    type: object
-  api.MessageResponse:
-    properties:
-      message:
-        example: accepted
-        type: string
-      messageId:
-        example: 01623bff-7fa9-4ccb-a843-e6d98908dc49
-        type: string
-    type: object
-  api.SentMessageResponse:
+  response.SentMessageResponse:
     properties:
       content:
         example: Hello, World!
@@ -55,7 +36,7 @@ definitions:
         example: "2023-10-01T10:05:00Z"
         type: string
     type: object
-  api.StopSchedulerResponse:
+  response.StopSchedulerResponse:
     properties:
       message:
         example: Message scheduler stopped successfully
@@ -107,19 +88,7 @@ paths:
         "200":
           description: Sent messages retrieved successfully
           schema:
-            $ref: '#/definitions/api.GetSentMessagesResponse'
-        "400":
-          description: Invalid limit parameter
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Failed to retrieve sent messages
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/response.GetSentMessagesResponse'
       summary: Get Sent Messages
       tags:
       - messages
@@ -128,32 +97,9 @@ paths:
       consumes:
       - application/json
       description: Send a message via webhook and return the webhook response
-      parameters:
-      - description: Message request payload
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/api.MessageRequest'
       produces:
       - application/json
-      responses:
-        "200":
-          description: Message sent successfully
-          schema:
-            $ref: '#/definitions/api.MessageResponse'
-        "400":
-          description: Invalid request body or missing required fields
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Failed to send message
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+      responses: {}
       summary: Start Send Message
       tags:
       - messages
@@ -166,13 +112,7 @@ paths:
         "200":
           description: Scheduler stopped successfully
           schema:
-            $ref: '#/definitions/api.StopSchedulerResponse'
-        "500":
-          description: Failed to stop scheduler
-          schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/response.StopSchedulerResponse'
       summary: Stop Message Sender
       tags:
       - messages

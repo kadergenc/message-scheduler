@@ -28,8 +28,8 @@ func NewMessageSendService(webhookClient webhook.WebhookClient, messagesRepo rep
 	}
 }
 
-func (is *MessageSendService) SendMessage(ctx context.Context, to string, content string) {
-	log.Logger.Info().Str("to", to).Str("content", content).Msg("Sending message...")
+func (is *MessageSendService) SendMessage(ctx context.Context) {
+	log.Logger.Info().Msg("Sending message...")
 
 	if !is.schedulerRunning && is.scheduler != nil {
 		is.startScheduler(ctx)

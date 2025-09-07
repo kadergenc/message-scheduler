@@ -57,25 +57,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Sent messages retrieved successfully",
                         "schema": {
-                            "$ref": "#/definitions/api.GetSentMessagesResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid limit parameter",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Failed to retrieve sent messages",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/response.GetSentMessagesResponse"
                         }
                     }
                 }
@@ -94,43 +76,7 @@ const docTemplate = `{
                     "messages"
                 ],
                 "summary": "Start Send Message",
-                "parameters": [
-                    {
-                        "description": "Message request payload",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/api.MessageRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Message sent successfully",
-                        "schema": {
-                            "$ref": "#/definitions/api.MessageResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request body or missing required fields",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Failed to send message",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
+                "responses": {}
             }
         },
         "/stop-message-sender": {
@@ -147,16 +93,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Scheduler stopped successfully",
                         "schema": {
-                            "$ref": "#/definitions/api.StopSchedulerResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Failed to stop scheduler",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/response.StopSchedulerResponse"
                         }
                     }
                 }
@@ -164,13 +101,13 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.GetSentMessagesResponse": {
+        "response.GetSentMessagesResponse": {
             "type": "object",
             "properties": {
                 "messages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/api.SentMessageResponse"
+                        "$ref": "#/definitions/response.SentMessageResponse"
                     }
                 },
                 "total": {
@@ -178,35 +115,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.MessageRequest": {
-            "type": "object",
-            "required": [
-                "content",
-                "to"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string"
-                },
-                "to": {
-                    "type": "string"
-                }
-            }
-        },
-        "api.MessageResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "accepted"
-                },
-                "messageId": {
-                    "type": "string",
-                    "example": "01623bff-7fa9-4ccb-a843-e6d98908dc49"
-                }
-            }
-        },
-        "api.SentMessageResponse": {
+        "response.SentMessageResponse": {
             "type": "object",
             "properties": {
                 "content": {
@@ -243,7 +152,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.StopSchedulerResponse": {
+        "response.StopSchedulerResponse": {
             "type": "object",
             "properties": {
                 "message": {
