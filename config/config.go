@@ -8,10 +8,7 @@ import (
 	"os"
 )
 
-const DEFAULT = "DEFAULT"
-
-var defaultRemoteServiceTimeout = 30000       // in ms
-var defaultCronSecondScheduleInSecond = 10000 // in ms
+var defaultRemoteServiceTimeout = 30000 // in ms
 
 type PostgresConfig struct {
 	WriteHost string `json:"writeHost"`
@@ -23,17 +20,17 @@ type PostgresConfig struct {
 	DbName    string `json:"dbname"`
 }
 
-type CronConfiguration struct {
-	Port           string `json:"port"`
-	SecondSchedule int    `json:"secondSchedule"`
+type WebhookConfiguration struct {
+	Host    string `json:"host"`
+	Timeout int    `json:"timeout"`
 }
 
 type AppConfig struct {
-	CronConfig CronConfiguration `json:"cron"`
-	Port       string            `json:"port"`
-	AppName    string            `json:"appName"`
-	TeamName   string            `json:"teamName"`
-	Postgres   PostgresConfig    `json:"postgres"`
+	WebhookConfig WebhookConfiguration `json:"webhook"`
+	Port          string               `json:"port"`
+	AppName       string               `json:"appName"`
+	TeamName      string               `json:"teamName"`
+	Postgres      PostgresConfig       `json:"postgres"`
 }
 
 func Read() AppConfig {
@@ -74,12 +71,8 @@ func Read() AppConfig {
 }
 
 func (appCfg *AppConfig) SetDefaults() {
-	if appCfg.CronConfig.Port == "" {
-		appCfg.CronConfig.Port = appCfg.Port
-	}
-
-	if appCfg.CronConfig.SecondSchedule == 0 {
-		appCfg.CronConfig.SecondSchedule = defaultCronSecondScheduleInSecond
+	if appCfg.WebhookConfig.Timeout == 0 {
+		appCfg.WebhookConfig.Timeout = defaultRemoteServiceTimeout
 	}
 
 }

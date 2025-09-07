@@ -32,7 +32,7 @@ func main() {
 
 	messagesRepo := repository.NewMessagesRepository(db)
 
-	webhookClient := webhook.NewWebhookClient("http://localhost:8000/webhook", 30*time.Second)
+	webhookClient := webhook.NewWebhookClient(cfg.WebhookConfig.Host, time.Duration(cfg.WebhookConfig.Timeout)*time.Millisecond)
 
 	messageScheduler := scheduler.NewSimpleScheduler()
 

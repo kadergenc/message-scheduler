@@ -134,10 +134,6 @@ func (is *MessageSendService) ProcessUnsentMessages(ctx context.Context, limit i
 				Str("phone", message.Phone).
 				Msg("Failed to send unsent message")
 
-			message.Status = status.FAILED
-			if saveErr := is.repo.Save(ctx, message); saveErr != nil {
-				log.Logger.Error().Err(saveErr).Str("message_id", message.Id).Msg("Failed to update message status to FAILED")
-			}
 			continue
 		}
 

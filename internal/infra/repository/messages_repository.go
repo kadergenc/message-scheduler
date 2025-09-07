@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"message-scheduler/internal/domain/entity"
+	"message-scheduler/internal/domain/types/status"
 	"message-scheduler/internal/infra/repository/models"
 	"message-scheduler/log"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -43,9 +45,8 @@ func (r *PostgresMessagesRepository) Save(ctx context.Context, i *entity.Message
 
 func (r *PostgresMessagesRepository) GetUnsentMessages(ctx context.Context, recordLimit int) ([]*entity.MessagesEntity, error) {
 	var messages []*models.Messages
-
 	err := r.db.WithContext(ctx).
-		Where("status = ?", "unsent").
+		Where("status = ?", strings.ToLower(string(status.UNSENT))).
 		Limit(recordLimit).
 		Find(&messages).Error
 

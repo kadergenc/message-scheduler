@@ -1,10 +1,10 @@
 {
-    "cron" :{
-      "port": "8082",
-      "secondSchedule" : 10
-    },
     "port": "8081",
     "appName": "message-scheduler",
+    "webhook": {
+      "host" : "http://localhost:8000/webhook",
+      "timeout" : 3000
+    },
     "postgres" : {
       "writeHost" : "localhost",
       "writePort": "5432",
