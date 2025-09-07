@@ -1,0 +1,17 @@
+{
+    "cron" :{
+      "port": "8082",
+      "secondSchedule" : 10
+    },
+    "port": "8081",
+    "appName": "message-scheduler",
+    "postgres" : {
+      "writeHost" : "localhost",
+      "writePort": "5432",
+      "readHost" : "localhost",
+      "readPort": "5432",
+      "dbname" : "messaging"
+    }
+}
+  
+  
