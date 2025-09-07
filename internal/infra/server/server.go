@@ -22,6 +22,7 @@ func NewAppServer(service *application.MessageSendService) AppServer {
 	app := fiber.New()
 
 	app.Post("/start-send-message", api.MessageHandler(service))
+	app.Get("/sent-messages", api.GetSentMessagesHandler(service))
 	app.Get("/_monitoring/health", index)
 
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)

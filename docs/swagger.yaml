@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  api.GetSentMessagesResponse:
+    properties:
+      messages:
+        items:
+          $ref: '#/definitions/api.SentMessageResponse'
+        type: array
+      total:
+        type: integer
+    type: object
   api.MessageRequest:
     properties:
       content:
@@ -17,6 +26,33 @@ definitions:
         type: string
       messageId:
         example: 01623bff-7fa9-4ccb-a843-e6d98908dc49
+        type: string
+    type: object
+  api.SentMessageResponse:
+    properties:
+      content:
+        example: Hello, World!
+        type: string
+      createdAt:
+        example: "2023-10-01T10:00:00Z"
+        type: string
+      id:
+        example: 01623bff-7fa9-4ccb-a843-e6d98908dc49
+        type: string
+      phone:
+        example: "+905551234567"
+        type: string
+      remoteMessageId:
+        example: whatsapp-msg-123
+        type: string
+      sentAt:
+        example: "2023-10-01T10:05:00Z"
+        type: string
+      status:
+        example: SENT
+        type: string
+      updatedAt:
+        example: "2023-10-01T10:05:00Z"
         type: string
     type: object
   server.HealthResponse:
@@ -48,6 +84,36 @@ paths:
       summary: Health Check
       tags:
       - monitoring
+  /sent-messages:
+    get:
+      description: Retrieve sent messages with optional limit
+      parameters:
+      - description: 'Number of messages to retrieve (default: 50, max: 100)'
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Sent messages retrieved successfully
+          schema:
+            $ref: '#/definitions/api.GetSentMessagesResponse'
+        "400":
+          description: Invalid limit parameter
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to retrieve sent messages
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Sent Messages
+      tags:
+      - messages
   /start-send-message:
     post:
       consumes:

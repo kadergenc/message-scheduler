@@ -13,6 +13,7 @@ import (
 type MessagesRepository interface {
 	Save(ctx context.Context, message *entity.MessagesEntity) error
 	GetUnsentMessages(ctx context.Context, recordLimit int) ([]*entity.MessagesEntity, error)
+	GetSentMessages(ctx context.Context, recordLimit int) ([]*entity.MessagesEntity, error)
 }
 
 type PostgresMessagesRepository struct {
@@ -56,6 +57,27 @@ func (r *PostgresMessagesRepository) GetUnsentMessages(ctx context.Context, reco
 	log.Logger.Info().Int("found_messages", len(messages)).Msg("Retrieved unsent messages from database")
 
 	log.Logger.Debug().Interface("messages", messages).Msg("Retrieved messages content")
+
+	return models.MapModelMessagesToEntitySlice(messages), nil
+}
+
+func (r *PostgresMessagesRepository) GetSentMessages(ctx context.Context, recordLimit int) ([]*entity.MessagesEntity, error) {
+	var messages []*models.Messages
+
+	err := r.db.WithContext(ctx).
+		Where("status = ?", "SENT").
+		Order("sent_at DESC").
+		Limit(recordLimit).
+		Find(&messages).Error
+
+	if err != nil {
+		log.Logger.Error().Err(err).Msg("Failed to fetch sent messages from database")
+		return nil, fmt.Errorf("failed to fetch sent messages: %w", err)
+	}
+
+	log.Logger.Info().Int("found_messages", len(messages)).Msg("Retrieved sent messages from database")
+
+	log.Logger.Debug().Interface("messages", messages).Msg("Retrieved sent messages content")
 
 	return models.MapModelMessagesToEntitySlice(messages), nil
 }

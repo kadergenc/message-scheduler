@@ -29,6 +29,52 @@
                 }
             }
         },
+        "/sent-messages": {
+            "get": {
+                "description": "Retrieve sent messages with optional limit",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Get Sent Messages",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number of messages to retrieve (default: 50, max: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sent messages retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/api.GetSentMessagesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid limit parameter",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to retrieve sent messages",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/start-send-message": {
             "post": {
                 "description": "Send a message via webhook and return the webhook response",
@@ -83,6 +129,20 @@
         }
     },
     "definitions": {
+        "api.GetSentMessagesResponse": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.SentMessageResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "api.MessageRequest": {
             "type": "object",
             "required": [
@@ -108,6 +168,43 @@
                 "messageId": {
                     "type": "string",
                     "example": "01623bff-7fa9-4ccb-a843-e6d98908dc49"
+                }
+            }
+        },
+        "api.SentMessageResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Hello, World!"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2023-10-01T10:00:00Z"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "01623bff-7fa9-4ccb-a843-e6d98908dc49"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+905551234567"
+                },
+                "remoteMessageId": {
+                    "type": "string",
+                    "example": "whatsapp-msg-123"
+                },
+                "sentAt": {
+                    "type": "string",
+                    "example": "2023-10-01T10:05:00Z"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "SENT"
+                },
+                "updatedAt": {
+                    "type": "string",
+                    "example": "2023-10-01T10:05:00Z"
                 }
             }
         },

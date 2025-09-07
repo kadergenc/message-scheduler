@@ -45,6 +45,19 @@ func (is *MessageSendService) GetUnsentMessages(ctx context.Context, limit int) 
 	return unsentMessages, nil
 }
 
+func (is *MessageSendService) GetSentMessages(ctx context.Context, limit int) ([]*entity.MessagesEntity, error) {
+	log.Logger.Info().Int("limit", limit).Msg("Getting sent messages...")
+
+	sentMessages, err := is.repo.GetSentMessages(ctx, limit)
+	if err != nil {
+		log.Logger.Error().Err(err).Msg("Failed to get sent messages")
+		return nil, fmt.Errorf("failed to get sent messages: %w", err)
+	}
+
+	log.Logger.Info().Int("count", len(sentMessages)).Msg("Retrieved sent messages")
+	return sentMessages, nil
+}
+
 func (is *MessageSendService) ProcessUnsentMessages(ctx context.Context, limit int) error {
 	unsentMessages, err := is.GetUnsentMessages(ctx, limit)
 	if err != nil {
