@@ -1,0 +1,85 @@
+basePath: /
+definitions:
+  api.MessageRequest:
+    properties:
+      content:
+        type: string
+      to:
+        type: string
+    required:
+    - content
+    - to
+    type: object
+  api.MessageResponse:
+    properties:
+      message:
+        example: accepted
+        type: string
+      messageId:
+        example: 01623bff-7fa9-4ccb-a843-e6d98908dc49
+        type: string
+    type: object
+  server.HealthResponse:
+    properties:
+      message:
+        example: Message scheduler alive!
+        type: string
+      status:
+        example: ok
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: This is a message scheduler service
+  title: Message Scheduler API
+  version: "1.0"
+paths:
+  /_monitoring/health:
+    get:
+      description: Check if the message scheduler service is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Service is healthy
+          schema:
+            $ref: '#/definitions/server.HealthResponse'
+      summary: Health Check
+      tags:
+      - monitoring
+  /start-send-message:
+    post:
+      consumes:
+      - application/json
+      description: Send a message via webhook and return the webhook response
+      parameters:
+      - description: Message request payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/api.MessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message sent successfully
+          schema:
+            $ref: '#/definitions/api.MessageResponse'
+        "400":
+          description: Invalid request body or missing required fields
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to send message
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Start Send Message
+      tags:
+      - messages
+swagger: "2.0"
