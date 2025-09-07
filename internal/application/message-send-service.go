@@ -7,29 +7,83 @@ import (
 	"message-scheduler/internal/domain/types/status"
 	"message-scheduler/internal/infra/client/webhook"
 	"message-scheduler/internal/infra/repository"
+	"message-scheduler/internal/port"
 	"message-scheduler/log"
 	"time"
 )
 
 type MessageSendService struct {
-	client webhook.Client
-	repo   repository.MessagesRepository
+	client           webhook.Client
+	repo             repository.MessagesRepository
+	scheduler        port.Scheduler
+	schedulerRunning bool
 }
 
-func NewMessageSendService(webhookClient webhook.Client, messagesRepo repository.MessagesRepository) *MessageSendService {
+func NewMessageSendService(webhookClient webhook.Client, messagesRepo repository.MessagesRepository, scheduler port.Scheduler) *MessageSendService {
 	return &MessageSendService{
-		client: webhookClient,
-		repo:   messagesRepo,
+		client:           webhookClient,
+		repo:             messagesRepo,
+		scheduler:        scheduler,
+		schedulerRunning: false,
 	}
 }
 
 func (is *MessageSendService) SendMessage(ctx context.Context, to string, content string) {
-
 	log.Logger.Info().Str("to", to).Str("content", content).Msg("Sending message...")
 
-	if err := is.ProcessUnsentMessages(ctx, 1); err != nil {
-		log.Logger.Error().Err(err).Msg("Failed to process unsent messages")
+	if !is.schedulerRunning && is.scheduler != nil {
+		is.startScheduler(ctx)
 	}
+}
+
+func (is *MessageSendService) startScheduler(ctx context.Context) {
+	log.Logger.Info().Msg("Starting continuous message processing scheduler...")
+
+	continuousJob := &continuousMessageProcessorJob{
+		messageService: is,
+		limit:          2,
+	}
+
+	is.scheduler.ScheduleJob(continuousJob, 2*time.Minute)
+
+	go func() {
+		is.scheduler.Start(ctx)
+	}()
+
+	is.schedulerRunning = true
+	log.Logger.Info().Msg("Continuous message processing scheduler started successfully")
+}
+
+func (is *MessageSendService) StopScheduler() error {
+	if is.scheduler == nil {
+		return fmt.Errorf("scheduler is not initialized")
+	}
+
+	if !is.schedulerRunning {
+		log.Logger.Warn().Msg("Scheduler is not running, ignoring stop request")
+		return nil
+	}
+
+	log.Logger.Info().Msg("Stopping message scheduler via API request")
+	err := is.scheduler.Stop()
+	if err == nil {
+		is.schedulerRunning = false
+		log.Logger.Info().Msg("Message scheduler stopped successfully")
+	}
+	return err
+}
+
+type continuousMessageProcessorJob struct {
+	messageService *MessageSendService
+	limit          int
+}
+
+func (j *continuousMessageProcessorJob) Execute(ctx context.Context) error {
+	return j.messageService.ProcessUnsentMessages(ctx, j.limit)
+}
+
+func (j *continuousMessageProcessorJob) Name() string {
+	return "ContinuousMessageProcessor"
 }
 
 func (is *MessageSendService) GetUnsentMessages(ctx context.Context, limit int) ([]*entity.MessagesEntity, error) {

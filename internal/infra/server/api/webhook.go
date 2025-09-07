@@ -33,6 +33,11 @@ type GetSentMessagesResponse struct {
 	Total    int                   `json:"total"`
 }
 
+type StopSchedulerResponse struct {
+	Status  string `json:"status" example:"success"`
+	Message string `json:"message" example:"Message scheduler stopped successfully"`
+}
+
 // MessageHandler godoc
 // @Summary  Start Send Message
 // @Description  Send a message via webhook and return the webhook response
@@ -109,6 +114,30 @@ func GetSentMessagesHandler(service *application.MessageSendService) fiber.Handl
 		response := GetSentMessagesResponse{
 			Messages: responseMessages,
 			Total:    len(responseMessages),
+		}
+
+		return ctx.JSON(response)
+	}
+}
+
+// StopSchedulerHandler godoc
+// @Summary  Stop Message Sender
+// @Description  Stop the currently running message-sending scheduler
+// @Tags         messages
+// @Produce      json
+// @Success      200 {object} StopSchedulerResponse "Scheduler stopped successfully"
+// @Failure      500 {object} map[string]string "Failed to stop scheduler"
+// @Router       /stop-message-sender [post]
+func StopSchedulerHandler(service *application.MessageSendService) fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+		err := service.StopScheduler()
+		if err != nil {
+			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to stop scheduler: " + err.Error()})
+		}
+
+		response := StopSchedulerResponse{
+			Status:  "success",
+			Message: "Message scheduler stopped successfully",
 		}
 
 		return ctx.JSON(response)

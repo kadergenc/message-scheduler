@@ -132,6 +132,35 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/stop-message-sender": {
+            "post": {
+                "description": "Stop the currently running message-sending scheduler",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Stop Message Sender",
+                "responses": {
+                    "200": {
+                        "description": "Scheduler stopped successfully",
+                        "schema": {
+                            "$ref": "#/definitions/api.StopSchedulerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to stop scheduler",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -211,6 +240,19 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string",
                     "example": "2023-10-01T10:05:00Z"
+                }
+            }
+        },
+        "api.StopSchedulerResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Message scheduler stopped successfully"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
                 }
             }
         },

@@ -55,6 +55,15 @@ definitions:
         example: "2023-10-01T10:05:00Z"
         type: string
     type: object
+  api.StopSchedulerResponse:
+    properties:
+      message:
+        example: Message scheduler stopped successfully
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
   server.HealthResponse:
     properties:
       message:
@@ -146,6 +155,25 @@ paths:
               type: string
             type: object
       summary: Start Send Message
+      tags:
+      - messages
+  /stop-message-sender:
+    post:
+      description: Stop the currently running message-sending scheduler
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Scheduler stopped successfully
+          schema:
+            $ref: '#/definitions/api.StopSchedulerResponse'
+        "500":
+          description: Failed to stop scheduler
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Stop Message Sender
       tags:
       - messages
 swagger: "2.0"
