@@ -13,13 +13,13 @@ import (
 )
 
 type MessageSendService struct {
-	client           webhook.Client
+	client           webhook.WebhookClient
 	repo             repository.MessagesRepository
 	scheduler        port.Scheduler
 	schedulerRunning bool
 }
 
-func NewMessageSendService(webhookClient webhook.Client, messagesRepo repository.MessagesRepository, scheduler port.Scheduler) *MessageSendService {
+func NewMessageSendService(webhookClient webhook.WebhookClient, messagesRepo repository.MessagesRepository, scheduler port.Scheduler) *MessageSendService {
 	return &MessageSendService{
 		client:           webhookClient,
 		repo:             messagesRepo,

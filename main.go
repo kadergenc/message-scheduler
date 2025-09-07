@@ -36,7 +36,7 @@ func main() {
 
 	messageScheduler := scheduler.NewSimpleScheduler()
 
-	messageService := application.NewMessageSendService(*webhookClient, messagesRepo, messageScheduler)
+	messageService := application.NewMessageSendService(webhookClient, messagesRepo, messageScheduler)
 
 	appServer := server.NewAppServer(messageService)
 

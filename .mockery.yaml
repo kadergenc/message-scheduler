@@ -1,0 +1,17 @@
+with-expecter: true
+mockname: "{{.InterfaceName}}Mock"
+filename: "{{.MockName}}.go"
+dir: mocks
+packages:
+  message-scheduler/internal/infra/client:
+    package: mocks
+    interfaces:
+      WebhookClient:
+  message-scheduler/internal/infra:
+    package: mocks
+    interfaces:
+      MessagesRepository:
+  message-scheduler/internal:
+    package: mocks
+    interfaces:
+      Scheduler:

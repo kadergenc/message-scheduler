@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+type WebhookClient interface {
+	SendMessage(ctx context.Context, to string, content string) (*WebhookResponse, error)
+}
+
 type Client struct {
 	client *http.Client
 	url    string
