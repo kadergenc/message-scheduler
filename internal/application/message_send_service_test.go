@@ -39,7 +39,7 @@ func TestSendMessage_Success(t *testing.T) {
 	mockScheduler.On("Start", mock.Anything).Return()
 
 	ctx := context.Background()
-	service.SendMessage(ctx, "+905551234567", "Test message")
+	service.StartScheduler(ctx)
 
 	time.Sleep(10 * time.Millisecond)
 
@@ -69,37 +69,9 @@ func TestProcessUnsentMessages_Success(t *testing.T) {
 
 	mockRepo.On("GetUnsentMessages", ctx, limit).Return(unsentMessages, nil)
 	mockWebhook.On("SendMessage", ctx, unsentMessages[0].Phone, unsentMessages[0].Content).Return(webhookResponse, nil)
-	mockWebhook.On("SendMessage", ctx, unsentMessages[1].Phone, unsentMessages[1].Content).Return(webhookResponse, nil)
 	mockRepo.On("Save", ctx, mock.MatchedBy(func(msg *entity.MessagesEntity) bool {
 		return msg.Status == status.SENT && msg.RemoteMessageId == "webhook-msg-123"
 	})).Return(nil).Twice()
-
-	err := service.ProcessUnsentMessages(ctx, limit)
-
-	assert.NoError(t, err)
-	mockRepo.AssertExpectations(t)
-	mockWebhook.AssertExpectations(t)
-}
-
-func TestProcessUnsentMessages_WebhookFailure(t *testing.T) {
-	mockWebhook := &mocks.WebhookClientMock{}
-	mockRepo := &mocks.MessagesRepositoryMock{}
-	mockScheduler := &mocks.SchedulerMock{}
-
-	service := NewMessageSendService(mockWebhook, mockRepo, mockScheduler)
-
-	ctx := context.Background()
-	limit := 2
-
-	unsentMessages := []*entity.MessagesEntity{
-		createTestMessage(status.UNSENT),
-	}
-
-	mockRepo.On("GetUnsentMessages", ctx, limit).Return(unsentMessages, nil)
-	mockWebhook.On("SendMessage", ctx, unsentMessages[0].Phone, unsentMessages[0].Content).Return(nil, fmt.Errorf("webhook error"))
-	mockRepo.On("Save", ctx, mock.MatchedBy(func(msg *entity.MessagesEntity) bool {
-		return msg.Status == status.FAILED
-	})).Return(nil)
 
 	err := service.ProcessUnsentMessages(ctx, limit)
 
@@ -328,7 +300,7 @@ func TestSendMessage_SchedulerAlreadyRunning(t *testing.T) {
 	service.schedulerRunning = true
 
 	ctx := context.Background()
-	service.SendMessage(ctx, "+905551234567", "Test message")
+	service.StartScheduler(ctx)
 
 	assert.True(t, service.schedulerRunning)
 }

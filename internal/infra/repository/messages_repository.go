@@ -66,7 +66,7 @@ func (r *PostgresMessagesRepository) GetSentMessages(ctx context.Context, record
 	var messages []*models.Messages
 
 	err := r.db.WithContext(ctx).
-		Where("status = ?", "SENT").
+		Where("status = ?", strings.ToLower(string(status.SENT))).
 		Order("sent_at DESC").
 		Limit(recordLimit).
 		Find(&messages).Error

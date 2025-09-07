@@ -8,16 +8,16 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// MessageHandler godoc
+// StartSendMessageHandler godoc
 // @Summary  Start Send Message
 // @Description  Send a message via webhook and return the webhook response
 // @Tags         messages
 // @Accept       json
 // @Produce      json
 // @Router       /start-send-message [post]
-func MessageHandler(service *application.MessageSendService) fiber.Handler {
+func StartSendMessageHandler(service *application.MessageSendService) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
-		service.SendMessage(ctx.Context())
+		service.StartScheduler(ctx.Context())
 
 		return nil
 	}
@@ -73,14 +73,14 @@ func GetSentMessagesHandler(service *application.MessageSendService) fiber.Handl
 	}
 }
 
-// StopSchedulerHandler godoc
+// StopMessageSenderHandler godoc
 // @Summary  Stop Message Sender
 // @Description  Stop the currently running message-sending scheduler
 // @Tags         messages
 // @Produce      json
 // @Success      200 {object} StopSchedulerResponse "Scheduler stopped successfully"
 // @Router       /stop-message-sender [post]
-func StopSchedulerHandler(service *application.MessageSendService) fiber.Handler {
+func StopMessageSenderHandler(service *application.MessageSendService) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		err := service.StopScheduler()
 		if err != nil {

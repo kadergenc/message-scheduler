@@ -8,6 +8,7 @@
 package main
 
 import (
+	"context"
 	"message-scheduler/config"
 	_ "message-scheduler/docs"
 	"message-scheduler/internal/application"
@@ -37,6 +38,8 @@ func main() {
 	messageScheduler := scheduler.NewSimpleScheduler()
 
 	messageService := application.NewMessageSendService(webhookClient, messagesRepo, messageScheduler)
+	
+	messageService.StartScheduler(context.Background())
 
 	appServer := server.NewAppServer(messageService)
 

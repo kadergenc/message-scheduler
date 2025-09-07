@@ -52,7 +52,7 @@ func (_m *WebhookClientMock) SendMessage(ctx context.Context, to string, content
 	return r0, r1
 }
 
-// WebhookClientMock_SendMessage_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SendMessage'
+// WebhookClientMock_SendMessage_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StartMessageScheduler'
 type WebhookClientMock_SendMessage_Call struct {
 	*mock.Call
 }

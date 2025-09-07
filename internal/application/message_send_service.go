@@ -28,30 +28,26 @@ func NewMessageSendService(webhookClient webhook.WebhookClient, messagesRepo rep
 	}
 }
 
-func (is *MessageSendService) SendMessage(ctx context.Context) {
-	log.Logger.Info().Msg("Sending message...")
+func (is *MessageSendService) StartScheduler(ctx context.Context) {
 
 	if !is.schedulerRunning && is.scheduler != nil {
-		is.startScheduler(ctx)
+		log.Logger.Info().Msg("Starting continuous message processing scheduler...")
+
+		continuousJob := &continuousMessageProcessorJob{
+			messageService: is,
+			limit:          2,
+		}
+
+		is.scheduler.ScheduleJob(continuousJob, 2*time.Minute)
+
+		go func() {
+			is.scheduler.Start(ctx)
+		}()
+
+		is.schedulerRunning = true
+		log.Logger.Info().Msg("Continuous message processing scheduler started successfully")
 	}
-}
 
-func (is *MessageSendService) startScheduler(ctx context.Context) {
-	log.Logger.Info().Msg("Starting continuous message processing scheduler...")
-
-	continuousJob := &continuousMessageProcessorJob{
-		messageService: is,
-		limit:          2,
-	}
-
-	is.scheduler.ScheduleJob(continuousJob, 2*time.Minute)
-
-	go func() {
-		is.scheduler.Start(ctx)
-	}()
-
-	is.schedulerRunning = true
-	log.Logger.Info().Msg("Continuous message processing scheduler started successfully")
 }
 
 func (is *MessageSendService) StopScheduler() error {
