@@ -39,17 +39,8 @@ func MessageHandler(service *application.MessageSendService) fiber.Handler {
 			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Both 'to' and 'content' fields are required"})
 		}
 
-		response, err := service.SendMessage(ctx.Context(), body.To, body.Content)
-		if err != nil {
-			return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error":   "Failed to send message",
-				"details": err.Error(),
-			})
-		}
+		service.SendMessage(ctx.Context(), body.To, body.Content)
 
-		return ctx.Status(fiber.StatusOK).JSON(MessageResponse{
-			Message:   response.Message,
-			MessageID: response.MessageID,
-		})
+		return nil
 	}
 }

@@ -12,6 +12,8 @@ import (
 	_ "message-scheduler/docs"
 	"message-scheduler/internal/application"
 	"message-scheduler/internal/infra/client/webhook"
+	"message-scheduler/internal/infra/database"
+	"message-scheduler/internal/infra/repository"
 	"message-scheduler/internal/infra/server"
 	"message-scheduler/log"
 	"time"
@@ -22,9 +24,13 @@ func main() {
 
 	cfg := config.Read()
 
+	db := database.NewPostgresDB(cfg.Postgres)
+	
+	messagesRepo := repository.NewMessagesRepository(db)
+
 	webhookClient := webhook.NewWebhookClient("http://localhost:8000/webhook", 30*time.Second)
 
-	messageService := application.NewMessageSendService(*webhookClient)
+	messageService := application.NewMessageSendService(*webhookClient, messagesRepo)
 
 	appServer := server.NewAppServer(messageService)
 
